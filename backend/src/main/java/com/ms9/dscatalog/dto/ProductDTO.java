@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+
 import com.ms9.dscatalog.entities.Category;
 import com.ms9.dscatalog.entities.Product;
 
@@ -13,8 +16,10 @@ public class ProductDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
+	@NotBlank(message = "Campo requerido")
 	private String name;
 	private String description;
+	@Positive(message = "Valor deve ser positivo")
 	private Double price;
 	private String imgUrl;	
 	private Instant date;
