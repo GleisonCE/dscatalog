@@ -4,11 +4,15 @@ import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ms9.dscatalog.dto.RoleDTO;
 import com.ms9.dscatalog.dto.UserDTO;
 import com.ms9.dscatalog.dto.UserInsertDTO;
+import com.ms9.dscatalog.dto.UserUpdateDTO;
 import com.ms9.dscatalog.entities.Role;
 import com.ms9.dscatalog.entities.User;
 import com.ms9.dscatalog.repositories.RoleRepository;
@@ -24,8 +29,9 @@ import com.ms9.dscatalog.services.exceptions.DatabaseException;
 import com.ms9.dscatalog.services.exceptions.ResourceNotFoundException;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
+	private static Logger logger = org.slf4j.LoggerFactory.getLogger(UserService.class);
 	@Autowired
 	private UserRepository repo;
 	@Autowired
@@ -56,7 +62,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public UserDTO update(Long id, UserDTO dto) {
+	public UserDTO update(Long id, UserUpdateDTO dto) {
 		try {
 			User entity = repo.getOne(id);
 			copyDtoToEntity(dto, entity);
@@ -87,6 +93,17 @@ public class UserService {
 			Role role = repoRole.getOne(roleDto.getId());
 			entity.getRoles().add(role);
 		}
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User user = repo.findByEmail(username);
+		if (user == null) {
+			logger.error("User not Found: "+ username);
+			throw new UsernameNotFoundException("Email not found");
+		}		
+		logger.info("User found: "+username);
+		return user;
 	}
 
 }
