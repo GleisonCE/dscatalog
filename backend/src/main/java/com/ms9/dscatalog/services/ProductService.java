@@ -1,5 +1,7 @@
 package com.ms9.dscatalog.services;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -30,8 +32,9 @@ public class ProductService {
 	private CategoryRepository repoCategory;
 
 	@Transactional(readOnly = true)
-	public Page<ProductDTO> findAllPaged(Pageable pageable) {
-		Page<Product> list = repo.findAll(pageable);
+	public Page<ProductDTO> findAllPaged(Long categoryId, String name, Pageable pageable) {
+		List<Category> categories= (categoryId == 0) ? null : Arrays.asList(repoCategory.getOne(categoryId));
+		Page<Product> list = repo.find(categories, name, pageable);
 		return list.map(x -> new ProductDTO(x));
 	}
 
