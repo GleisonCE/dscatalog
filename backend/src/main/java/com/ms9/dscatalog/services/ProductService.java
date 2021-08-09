@@ -35,6 +35,7 @@ public class ProductService {
 	public Page<ProductDTO> findAllPaged(Long categoryId, String name, Pageable pageable) {
 		List<Category> categories= (categoryId == 0) ? null : Arrays.asList(repoCategory.getOne(categoryId));
 		Page<Product> list = repo.find(categories, name, pageable);
+		//repo.findProductWithCategories(list.getContent()); //Problema das consulta N+1, para o construtor do produto com categoria
 		return list.map(x -> new ProductDTO(x));
 	}
 
