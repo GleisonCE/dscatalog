@@ -1,9 +1,12 @@
-import './assets/styles/custom.scss';
-import './App.css';
+import "./assets/styles/custom.scss";
+import "./App.css";
+import Home from "pages/Home";
 
 function App() {
   return (
-    <h1>DS Catalog</h1>
+    <>
+      <Home />
+    </>
   );
 }
 
