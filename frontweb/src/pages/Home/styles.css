@@ -7,8 +7,6 @@
 .home-card {
   display: flex;
   flex-direction: column-reverse;
-  background-color: #fff;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 255);
   border-radius: 20px;
 }
 
@@ -104,7 +102,7 @@
   .home-card {
     flex-direction: row;
     justify-content: space-around;
-    padding: calc(((85vh - 100px)/2)-20px) 0;
+    padding: calc(((85vh - 100px) / 2)-20px) 0;
   }
 
   .home-content-container {
@@ -114,7 +112,7 @@
     align-items: flex-start;
     text-align: left;
     align-content: space-between;
-    flex-flow: wrap;    
+    flex-flow: wrap;
   }
 
   .home-image-container {
