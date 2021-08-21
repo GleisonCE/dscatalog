@@ -1,0 +1,35 @@
+ul {
+  display: flex;
+  justify-content: space-around;
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+.admin-nav-container {
+  padding: 10px;
+  background-color: #fff;
+}
+
+.admin-nav-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f2f2f2;
+  height: 50px;
+  border-radius: 100px;
+  padding: 0 10px;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0.015em;
+  color: #9E9E9E;
+}
+
+.admin-nav-item.active {
+    background-color: rgba(64, 123, 255, 0.3);
+    color: #407BFF;
+}
+
+.admin-nav-item p {
+  margin-bottom: 0px;
+}
