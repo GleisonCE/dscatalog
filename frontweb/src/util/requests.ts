@@ -1,6 +1,15 @@
 import axios, { AxiosRequestConfig } from 'axios';
+import jwtDecode from 'jwt-decode';
 import qs from 'qs';
 import history from './history';
+
+type Role = 'ROLE_OPERATOR' | 'ROLE_ADMIN';
+
+export type TokenData = {
+    exp: number;
+    user_name: string;
+    authorities: Role[];
+}
 
 type LoginResponse = {
     access_token: string;
@@ -53,6 +62,10 @@ export const getAuthData = () => {
     return JSON.parse(str) as LoginResponse;
 }
 
+export const removeAuthData = () => {
+    localStorage.removeItem(tokenKey);
+}
+
 axios.interceptors.request.use(function (config) {
     // Do something before request is sent
     return config;
@@ -71,3 +84,16 @@ axios.interceptors.response.use(function (response) {
     }
     return Promise.reject(error);
 });
+
+export const getTokenData = (): TokenData | undefined => {
+    try {
+        return jwtDecode(getAuthData().access_token) as TokenData;
+    } catch {
+        return undefined;
+    }
+}
+
+export const isAuthenticated = (): boolean => {
+    const tokenData = getTokenData();
+    return (tokenData && tokenData.exp * 1000 > Date.now()) ? true : false;
+}

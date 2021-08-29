@@ -1,8 +1,42 @@
-import "./styles.css";
 import "bootstrap/js/src/collapse.js";
 import { Link, NavLink } from "react-router-dom";
+import {
+  getTokenData,
+  isAuthenticated,
+  removeAuthData,
+} from "util/requests";
+import { useContext, useEffect } from "react";
+import history from "util/history";
+import { AuthContext } from "AuthContext";
+
+import "./styles.css";
 
 const Navbar = () => {
+
+  const { authContextData, setAuthContextData} = useContext(AuthContext);
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      setAuthContextData({
+        authenticated: true,
+        tokenData: getTokenData(),
+      });
+    } else {
+      setAuthContextData({
+        authenticated: false,
+      });
+    }
+  }, [setAuthContextData]);
+
+  const handleLogoutClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    removeAuthData();
+    setAuthContextData({
+      authenticated: false,
+    });
+    history.replace("/");
+  };
+
   return (
     <nav className="navbar navbar-expand-md navbar-dark bg-primary main-nav">
       <div className="container-fluid">
@@ -28,12 +62,28 @@ const Navbar = () => {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/products" activeClassName="active">CATÁLOGO</NavLink>
+              <NavLink to="/products" activeClassName="active">
+                CATÁLOGO
+              </NavLink>
             </li>
             <li>
-              <NavLink to="/admin" activeClassName="active">ADMIN</NavLink>
+              <NavLink to="/admin" activeClassName="active">
+                ADMIN
+              </NavLink>
             </li>
           </ul>
+        </div>
+        <div className="nav-login-logout">
+          {authContextData.authenticated ? (
+            <>
+              <span className="nav-username">{authContextData.tokenData?.user_name}</span>
+              <a href="#logout" onClick={handleLogoutClick}>
+                LOGOUT
+              </a>
+            </>
+          ) : (
+            <Link to="/admin/auth">LOGIN</Link>
+          )}
         </div>
       </div>
     </nav>
