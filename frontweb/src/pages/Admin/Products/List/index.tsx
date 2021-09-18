@@ -1,32 +1,32 @@
-import ProductCrudCard from "pages/Admin/Products/ProductCrudCard";
+import { AxiosRequestConfig } from "axios";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import ProductCrudCard from "pages/Admin/Products/ProductCrudCard";
+import { Product } from "types/products";
+import { SpringPage } from "types/vendor/spring";
+import { requestBackend } from "util/requests";
 
 import "./styles.css";
 
 const List = () => {
-  const product = {
-    id: 2,
-    name: "Smart TV",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    price: 2190.0,
-    imgUrl:
-      "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/2-big.jpg",
-    date: "2020-07-14T10:00:00Z",
-    categories: [
-      {
-        id: 1,
-        name: "Livros",
+  const [page, setPage] = useState<SpringPage<Product>>();
+
+  useEffect(() => {
+    const config: AxiosRequestConfig = {
+      method: "GET",
+      url: "/products",
+      params: {
+        page: 0,
+        size: 12,
       },
-      {
-        id: 3,
-        name: "Computadores",
-      },
-    ],
-  };
+    };
+    requestBackend(config).then((resp) => {
+      setPage(resp.data);
+    });
+  }, []);
 
   return (
-    <>
+    <div className="product-crud-container">
       <div className="product-crud-bar-container">
         <Link to="/admin/products/creat">
           <button className="btn btn-primary text-white btn-crud-add">
@@ -37,17 +37,13 @@ const List = () => {
         <div className="base-card product-filter_container">SearchBar</div>
       </div>
       <div className="row">
-        <div className="col-sm-6 col-md-12">
-          <ProductCrudCard product={product} />
-        </div>
-        <div className="col-sm-6 col-md-12">
-          <ProductCrudCard product={product} />
-        </div>
-        <div className="col-sm-6 col-md-12">
-          <ProductCrudCard product={product} />
-        </div>
+        {page?.content.map((product) => (
+          <div key={product.id} className="col-sm-6 col-md-12">
+            <ProductCrudCard product={product} />
+          </div>
+        ))}
       </div>
-    </>
+    </div>
   );
 };
 
