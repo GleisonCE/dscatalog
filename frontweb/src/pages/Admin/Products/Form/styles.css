@@ -34,19 +34,36 @@
   font-weight: bold;
 }
 
+.product-crud-select__control {
+  border-radius: 10px !important;
+  font-size: 1em;
+  letter-spacing: -0.015em;
+  color: #263238;
+  height: 50px;
+  
+}
+
+.product-crud-select__placeholder {
+  color: #9E9e9E !important;
+}
+
+.product-crud-select__indicator-separator {
+  display: none;
+}
+
 @media (min-width: 576px) {
-    .product-crud-buttons-container {
-      justify-content: flex-end;
-    }
-
-    .product-crud-button {
-        margin-left: 30px;
-    }
-
-    .product-crud-button {
-        width: 210px;
-    }
+  .product-crud-buttons-container {
+    justify-content: flex-end;
   }
+
+  .product-crud-button {
+    margin-left: 30px;
+  }
+
+  .product-crud-button {
+    width: 210px;
+  }
+}
 
 @media (min-width: 992px) {
   .product-crud-inputs-left-container {

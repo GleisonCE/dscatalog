@@ -1,9 +1,13 @@
 import { AxiosRequestConfig } from "axios";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { useHistory, useParams } from "react-router";
 import { Product } from "types/products";
 import { requestBackend } from "util/requests";
+import Select from "react-select";
+import { Category } from "types/category";
+import CurrencyInput from "react-currency-input-field";
+
 import "./styles.css";
 
 type UrlParams = {
@@ -13,13 +17,21 @@ type UrlParams = {
 const Form = () => {
   const { productId } = useParams<UrlParams>();
   const isEditing = productId !== "create";
+  const [selectCategories, setSelectCategories] = useState<Category[]>([]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
+    control,
   } = useForm<Product>();
+
+  useEffect(() => {
+    requestBackend({ url: "/categories" }).then((response) => {
+      setSelectCategories(response.data.content);
+    });
+  }, []);
 
   useEffect(() => {
     if (isEditing) {
@@ -39,11 +51,9 @@ const Form = () => {
   const onSubmit = (formData: Product) => {
     const data = {
       ...formData,
-      imgUrl: isEditing
-        ? formData.imgUrl
-        : "https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/3-big.jpg",
-      categories: isEditing ? formData.categories : [{ id: 1, name: "" }],
+      price: String(formData.price).replace(",", "."),
     };
+
     const config: AxiosRequestConfig = {
       method: isEditing ? "PUT" : "POST",
       url: isEditing ? `/products/${productId}` : "/products",
@@ -85,19 +95,69 @@ const Form = () => {
                 </div>
               </div>
               <div className="margem-bottom-30">
+                <Controller
+                  name="categories"
+                  rules={{ required: true }}
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      options={selectCategories}
+                      isMulti
+                      classNamePrefix="product-crud-select"
+                      getOptionLabel={(category: Category) => category.name}
+                      getOptionValue={(category: Category) =>
+                        String(category.id)
+                      }
+                    />
+                  )}
+                />
+                {errors.categories && (
+                  <div className="invalid-feedback d-block">
+                    Campo obrigatório
+                  </div>
+                )}
+              </div>
+              <div className="margem-bottom-30">
+                <Controller
+                  name="price"
+                  rules={{ required: "Campo obrigatório" }}
+                  control={control}
+                  render={({ field }) => (
+                    <CurrencyInput
+                      placeholder="Preço"
+                      className={`form-control base-input ${
+                        errors.name ? "is-invalid" : ""
+                      }`}
+                      disableGroupSeparators={true}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    />
+                  )}
+                />
+                <div className="invalid-feedback d-block">
+                  {errors.price?.message}
+                </div>
+              </div>
+
+              <div className="margem-bottom-30">
                 <input
-                  {...register("price", {
+                  {...register("imgUrl", {
                     required: "Campo obrigatório",
+                    pattern: {
+                      value: /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/gm,
+                      message: "Deve ser uma URL válida",
+                    },
                   })}
                   type="text"
                   className={`form-control base-input ${
                     errors.name ? "is-invalid" : ""
                   }`}
-                  placeholder="Preço"
-                  name="price"
+                  placeholder="URL da imagem do produtp"
+                  name="imgUrl"
                 />
                 <div className="invalid-feedback d-block">
-                  {errors.price?.message}
+                  {errors.imgUrl?.message}
                 </div>
               </div>
             </div>

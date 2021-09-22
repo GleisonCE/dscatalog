@@ -32,7 +32,7 @@ const List = () => {
   return (
     <div className="product-crud-container">
       <div className="product-crud-bar-container">
-        <Link to="/admin/products/creat">
+        <Link to="/admin/products/create">
           <button className="btn btn-primary text-white btn-crud-add">
             ADICIONAR
           </button>
@@ -43,7 +43,7 @@ const List = () => {
       <div className="row">
         {page?.content.map((product) => (
           <div key={product.id} className="col-sm-6 col-md-12">
-            <ProductCrudCard product={product} onDelete={() => getProucts()}/>
+            <ProductCrudCard product={product} onDelete={() => getProucts()} />
           </div>
         ))}
       </div>
